@@ -1,0 +1,59 @@
+# Configure the Azure provider
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 2.26"
+    }
+  }
+
+  required_version = ">= 0.14.9"
+}
+
+provider "azurerm" {
+  features {}
+  subscription_id = "b2d63878-776c-4e91-8789-cf0c7ace6e60"
+  tenant_id       = "fedfd771-b82e-47b1-a705-959f02fe7ded"
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "pavan_terraform_rg"
+  location = "australiaeast"
+}
+
+resource "azurerm_storage_account" "azappdemostoracc" {
+  name                     = "azappdemostoracc"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  allow_blob_public_access = false
+
+  tags = {
+    environment = "dev"
+  }
+}
+
+resource "azurerm_cdn_profile" "glsmicrositescdn" {
+  name                = "micrositescdn"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  sku                 = "Standard_Microsoft"
+
+  tags = {
+    environment = "dev"
+  }
+}
+
+resource "azurerm_cdn_endpoint" "glsmicrosites" {
+  name                = "glsmicrosites"
+  profile_name        = azurerm_cdn_profile.glsmicrositescdn.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  origin {
+    
+    name      = "example"
+    host_name = azurerm_storage_account.azappdemostoracc.
+  }
+}
