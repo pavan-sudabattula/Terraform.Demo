@@ -11,12 +11,6 @@ locals {
   if_static_website_enabled = var.enable_static_website ? [{}] : []
 }
 
-provider "azurerm" {
-  features {}
-  subscription_id = var.provider_subscription_id
-  tenant_id       = var.provider_tenant_id
-}
-
 resource "azurerm_resource_group" "rg" {
   count    = var.create_resource_group ? 1 : 0
   name     = var.resource_group_name
