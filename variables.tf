@@ -1,3 +1,11 @@
+variable "provider_subscription_id" {
+  description = "subscription id of the azure subscription to be used"
+}
+
+variable "provider_tenant_id" {
+  description = "tenant id of the azure subscription to be used"
+}
+
 variable "create_resource_group" {
   description = "Whether to create resource group and use it for all networking resources"
   default     = false
