@@ -56,12 +56,12 @@ resource "azurerm_storage_account" "storeacc" {
 }
 
 # Following resource is not removed when we update the terraform plan with `false` after initial run. Need to check for the option to remove `$web` folder if we disable static website and update the plan. 
-resource "null_resource" "copyfilesweb" {
-  count = var.enable_static_website ? 1 : 0
-  provisioner "local-exec" {
-    command = "az storage blob upload-batch --no-progress --account-name ${azurerm_storage_account.storeacc.name} -s ${var.static_website_source_folder} -d '$web' --output none"
-  }
-}
+# resource "null_resource" "copyfilesweb" {
+#   count = var.enable_static_website ? 1 : 0
+#   provisioner "local-exec" {
+#     command = "az storage blob upload-batch --no-progress --account-name ${azurerm_storage_account.storeacc.name} -s ${var.static_website_source_folder} -d '$web' --output none"
+#   }
+# }
 
 #---------------------------------------------------------
 # Add CDN profile and endpoint to static website
@@ -98,18 +98,18 @@ resource "azurerm_cdn_endpoint" "cdn-endpoint" {
 
 }
 
-resource "null_resource" "add_custom_domain" {
-  count = var.custom_domain_name != null ? 1 : 0
-  depends_on = [
-    azurerm_cdn_endpoint.cdn-endpoint
-  ]
+# resource "null_resource" "add_custom_domain" {
+#   count = var.custom_domain_name != null ? 1 : 0
+#   depends_on = [
+#     azurerm_cdn_endpoint.cdn-endpoint
+#   ]
 
-  provisioner "local-exec" {
-    command = "pwsh ${path.cwd}/Setup-AzCdnCustomDomain.ps1"
-    environment = {
-      CUSTOM_DOMAIN = var.custom_domain_name
-      RG_NAME       = var.resource_group_name
-      FRIENDLY_NAME = var.friendly_name
-    }
-  }
-}
+#   provisioner "local-exec" {
+#     command = "pwsh ${path.cwd}/Setup-AzCdnCustomDomain.ps1"
+#     environment = {
+#       CUSTOM_DOMAIN = var.custom_domain_name
+#       RG_NAME       = var.resource_group_name
+#       FRIENDLY_NAME = var.friendly_name
+#     }
+#   }
+# }
